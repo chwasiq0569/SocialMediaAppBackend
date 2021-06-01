@@ -32,3 +32,24 @@ module.exports.updateUser = async (req, res) => {
       .json({ message: "You can update only your account!" });
   }
 };
+
+module.exports.deleteUser = async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    try {
+      const updatedUser = await User.findByIdAndDelete(req.params.id);
+      if (updatedUser) {
+        console.log("Updated User: ", updatedUser);
+        return res.status(200).json({ message: "Account Deleted" });
+      } else {
+        console.log("User not Deleted");
+        return res.status(400).json({ message: "Account is not Deleted!" });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    return res
+      .status(500)
+      .json({ message: "You can delete only your account!" });
+  }
+};

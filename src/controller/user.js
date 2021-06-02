@@ -53,3 +53,37 @@ module.exports.deleteUser = async (req, res) => {
       .json({ message: "You can delete only your account!" });
   }
 };
+
+module.exports.getUser = async (req, res) => {
+  try {
+    const userFound = await User.findById(req.params.id);
+    if (userFound) {
+      const { password, updatedAt, ...others } = userFound._doc;
+      return res.status(200).json(others);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+module.exports.followUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const currentUser = await User.findById(req.body.userId);
+    if (user) {
+      if (!user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $push: { followers: user._id } });
+        await currentUser.updateOne({ $push: { followings: currentUser._id } });
+        res.status(201).json(user);
+      } else {
+        res.status(400).json({ message: "User Already Followed" });
+      }
+    } else {
+      res.status(404).json({ message: "User not Found" });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};

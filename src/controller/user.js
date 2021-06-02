@@ -76,7 +76,7 @@ module.exports.followUser = async (req, res) => {
       if (!user.followers.includes(currentUser._id)) {
         await user.updateOne({ $push: { followers: currentUser._id } });
         await currentUser.updateOne({ $push: { followings: user._id } });
-        res.status(201).json(user);
+        res.status(200).json(user);
       } else {
         res.status(400).json({ message: "User Already Followed" });
       }
@@ -96,7 +96,7 @@ module.exports.unfollowUser = async (req, res) => {
       if (user.followers.includes(currentUser._id)) {
         await user.updateOne({ $pull: { followers: currentUser._id } });
         await currentUser.updateOne({ $pull: { followings: user._id } });
-        res.status(201).json(user);
+        res.status(200).json(user);
       } else {
         res.status(400).json({ message: "User Already Unfollowed" });
       }

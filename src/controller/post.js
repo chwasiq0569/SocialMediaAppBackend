@@ -1,4 +1,5 @@
 const Post = require("../model/post");
+const User = require("../model/user");
 
 module.exports.createPost = async (req, res) => {
   const newPost = new Post(req.body);
@@ -79,6 +80,20 @@ module.exports.getPost = async (req, res) => {
     } else {
       res.status(404).json({ message: "Post not found" });
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+module.exports.timeline = async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.body.userId);
+    const userPosts = await Post.find({ userId: currentUser._id });
+    const friendPosts = await Promise.all(
+      currentUser.followings.map((friendId) => Post.find({ userId: friendId }))
+    );
+    const allPosts = userPosts.concat(...friendPosts);
+    res.status(200).json(allPosts);
   } catch (err) {
     res.status(500).json(err);
   }

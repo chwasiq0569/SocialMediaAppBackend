@@ -73,12 +73,32 @@ module.exports.followUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     const currentUser = await User.findById(req.body.userId);
     if (user) {
-      if (!user.followers.includes(req.body.userId)) {
-        await user.updateOne({ $push: { followers: user._id } });
-        await currentUser.updateOne({ $push: { followings: currentUser._id } });
+      if (!user.followers.includes(currentUser._id)) {
+        await user.updateOne({ $push: { followers: currentUser._id } });
+        await currentUser.updateOne({ $push: { followings: user._id } });
         res.status(201).json(user);
       } else {
         res.status(400).json({ message: "User Already Followed" });
+      }
+    } else {
+      res.status(404).json({ message: "User not Found" });
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+module.exports.unfollowUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const currentUser = await User.findById(req.body.userId);
+    if (user) {
+      if (user.followers.includes(currentUser._id)) {
+        await user.updateOne({ $pull: { followers: currentUser._id } });
+        await currentUser.updateOne({ $pull: { followings: user._id } });
+        res.status(201).json(user);
+      } else {
+        res.status(400).json({ message: "User Already Unfollowed" });
       }
     } else {
       res.status(404).json({ message: "User not Found" });

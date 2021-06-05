@@ -9,7 +9,7 @@ const {
 } = require("../controller/post");
 
 router.get("/:id", getPost);
-router.post("/timeline", timeline);
+router.get("/timeline/:userId", timeline);
 router.post("/create", createPost);
 router.put("/:id", updatePost);
 router.delete("/:id", deletePost);

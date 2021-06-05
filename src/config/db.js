@@ -12,8 +12,8 @@ const connectDB = () => {
     .then(() => {
       console.log("DB Connection Established");
     })
-    .catch(() => {
-      console.log("Connection Failed");
+    .catch((err) => {
+      console.log("Connection Failed", err);
     });
 };
 

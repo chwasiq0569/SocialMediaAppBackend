@@ -2,7 +2,17 @@ const Post = require("../model/post");
 const User = require("../model/user");
 
 module.exports.createPost = async (req, res) => {
-  const newPost = new Post(req.body);
+  let imageUrl;
+  if (req.files) {
+    imageUrl = req.files.postImage[0].filename;
+  }
+  const newPost = new Post({
+    userId: req.body.userId,
+    desc: req.body.desc,
+    likes: req.body.likes,
+    image: imageUrl,
+  });
+  console.log("========================================================");
   try {
     const savePost = await newPost.save();
     if (savePost) {
@@ -20,7 +30,7 @@ module.exports.updatePost = async (req, res) => {
   if (post) {
     if (req.body.userId === post.userId) {
       try {
-        console.log(post, req.body);
+        // console.log(post, req.body);
         await post.updateOne({ $set: req.body });
         res.status(200).json(post);
       } catch (err) {
@@ -39,7 +49,6 @@ module.exports.deletePost = async (req, res) => {
   if (post) {
     if (req.body.userId === post.userId) {
       try {
-        console.log(post, req.body);
         await post.deleteOne({ $set: req.body });
         res.status(200).json({ message: "your Post is deleted Successfully!" });
       } catch (err) {

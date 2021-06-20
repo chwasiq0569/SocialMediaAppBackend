@@ -7,10 +7,15 @@ const {
   getPost,
   timeline,
 } = require("../controller/post");
+const upload = require("../middlewares/FileUpload");
 
 router.get("/:id", getPost);
 router.get("/timeline/:userId", timeline);
-router.post("/create", createPost);
+router.post(
+  "/create",
+  upload.fields([{ name: "postImage", maxCount: 1 }]),
+  createPost
+);
 router.put("/:id", updatePost);
 router.delete("/:id", deletePost);
 router.put("/:id/like", likePost);

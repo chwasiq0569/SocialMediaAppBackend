@@ -2,6 +2,10 @@ const User = require("../model/user");
 const bcrypt = require("bcrypt");
 
 module.exports.registerUser = async (req, res) => {
+  let profilePicUrl;
+  if (req.file) {
+    profilePicUrl = req.file.filename;
+  }
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = new User({

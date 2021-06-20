@@ -14,7 +14,9 @@ app.use(cors());
 connectDB();
 
 app.use(express.json());
+app.use(express.static("./public"));
 
+// app.use("/public/images", express.static(__dirname + "/public/images/"));
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/post", postRoute);

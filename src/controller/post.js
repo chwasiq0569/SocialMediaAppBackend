@@ -1,5 +1,6 @@
 const Post = require("../model/post");
 const User = require("../model/user");
+const jwt = require("jsonwebtoken");
 
 module.exports.createPost = async (req, res) => {
   let imageUrl;
@@ -96,14 +97,33 @@ module.exports.getPost = async (req, res) => {
 
 module.exports.timeline = async (req, res) => {
   try {
+    console.log("req.headers.authorization", req.headers.authorization);
+    // console.log(
+    //   "process.env.JWT_SECURITY_KEY",
+    //   jwt.verify(token, process.env.JWT_SECURITY_KEY)
+    // );
+    if (req.headers.authorization) {
+      let token = req.headers.authorization;
+      const user = jwt.verify(token, process.env.JWT_SECURITY_KEY);
+      // req.user = user;
+      // console.log("req.user", req.user);
+    } else {
+      res.status(400).json({ status: 0, message: "Authorization Required" });
+    }
     const currentUser = await User.findById(req.params.userId);
     const userPosts = await Post.find({ userId: currentUser._id });
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => Post.find({ userId: friendId }))
     );
     const allPosts = userPosts.concat(...friendPosts);
-    res.status(200).json(allPosts);
+    res.status(200).json({
+      status: 1,
+      posts: allPosts,
+    });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({
+      status: 0,
+      err,
+    });
   }
 };

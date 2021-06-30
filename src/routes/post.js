@@ -7,6 +7,7 @@ const {
   getPost,
   timeline,
 } = require("../controller/post");
+const { requireSignIn } = require("../middlewares/common-middleware");
 const upload = require("../middlewares/FileUpload");
 
 router.get("/:id", getPost);

@@ -98,15 +98,11 @@ module.exports.getPost = async (req, res) => {
 module.exports.timeline = async (req, res) => {
   try {
     console.log("req.headers.authorization", req.headers.authorization);
-    // console.log(
-    //   "process.env.JWT_SECURITY_KEY",
-    //   jwt.verify(token, process.env.JWT_SECURITY_KEY)
-    // );
     if (req.headers.authorization) {
       let token = req.headers.authorization;
       const user = jwt.verify(token, process.env.JWT_SECURITY_KEY);
-      // req.user = user;
-      // console.log("req.user", req.user);
+      req.user = user;
+      console.log("req.user", req.user);
     } else {
       res.status(400).json({ status: 0, message: "Authorization Required" });
     }
